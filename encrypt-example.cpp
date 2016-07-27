@@ -24,9 +24,11 @@ void SaveMassiveCryptoSamples(const string& outfilebase, const string& text, siz
     BigramBlocksStatistics biStatObj(text.size());
 
     InitializeRandomState(state, default_random_engine(system_clock::now().time_since_epoch().count()));
-    size_t nextSavePoint = 1<<20, spIndex = 20;
+    constexpr size_t SP_START = 20;
+    size_t nextSavePoint = 1<<20, spIndex = SP_START;
     for (size_t i = 0; i < count; ++i) {
         if (i == nextSavePoint) {
+            std::cout << "Save point #" << (1 + spIndex - SP_START) << " (" << spIndex << ")"<< std::endl;
             DumpCurrentStat(outfilebase + ".unigrams", spIndex, uniStatObj);
             DumpCurrentStat(outfilebase + ".bigrams", spIndex, biStatObj);
             ++spIndex;
