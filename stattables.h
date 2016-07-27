@@ -53,7 +53,8 @@ public:
 
     void Dump(std::ostream& out) const {
         for (const auto& subStat: Internal) {
-            assert(accumulate(subStat.begin(), subStat.end(), 0ull) == AggregatedBlocksCount);
+            const auto accumulated = accumulate(subStat.begin(), subStat.end(), 0ull);
+            assert(accumulated == AggregatedBlocksCount);
             out.write(reinterpret_cast<const char*>(&*subStat.begin()), CELL_SIZE * sizeof(subStat[0]));
             if (!out)
                 throw std::runtime_error("statics dump error");
@@ -100,7 +101,7 @@ public:
 
     void Update(const std::vector<unsigned char>& buffer) {
         assert(buffer.size() == ChunkSize + 1);
-        for(size_t i = 0; i + 1 < ChunkSize; ++i) {
+        for(size_t i = 0; i < ChunkSize; ++i) {
             const size_t offset = buffer[i] * 256 + buffer[i + 1];
             ++Internal[i][offset];
         }
